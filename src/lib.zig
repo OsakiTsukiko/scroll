@@ -21,10 +21,6 @@ pub const RuntimeArchive = struct {
         };
     }
 
-    pub fn deinit(self: *RuntimeArchive) void {
-        self.file.close();
-    }
-
     pub fn getData(self: *RuntimeArchive, allocator: std.mem.Allocator, path: []const u8) !?[]const u8 {
         try self.file.seekTo(@sizeOf(u64));
 
@@ -69,6 +65,7 @@ test "All" {
     const allocator = std.testing.allocator;
 
     const file = try fs.cwd().openFile("test_archive.scroll", .{});
+    defer file.close();
     var archive = try RuntimeArchive.new(file);
 
     {
